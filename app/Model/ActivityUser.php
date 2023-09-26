@@ -9,11 +9,9 @@ use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\DbConnection\Model\Model;
 
 /**
- * @property int $id 
- * @property int $activity_id 活动id
- * @property int $user_id 参与人id
- * @property \Carbon\Carbon $created_at 
- * @property \Carbon\Carbon $updated_at 
+ * @property-read Activity|null $activity 
+ * @property-read User|null $user 
+ * @property-read \Hyperf\Database\Model\Collection|ActivityUserScore[]|null $activityUserScores 
  */
 class ActivityUser extends Model
 {

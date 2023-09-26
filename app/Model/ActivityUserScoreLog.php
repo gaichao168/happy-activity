@@ -9,11 +9,14 @@ use Hyperf\DbConnection\Model\Model;
 
 /**
  * @property int $id 
- * @property int $user_id 用户id
+ * @property int $activity_id 活动ID
+ * @property int $activity_user_id 参与活动用户id
  * @property int $activity_user_score_id 活动用户分数id
  * @property int $score 分数
  * @property \Carbon\Carbon $created_at 
  * @property \Carbon\Carbon $updated_at 
+ * @property-read ActivityUserScore|null $activityUserScore 
+ * @property-read ActivityUser|null $activityUser 
  */
 class ActivityUserScoreLog extends Model
 {
@@ -25,7 +28,7 @@ class ActivityUserScoreLog extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['user_id', 'activity_user_score_id', 'score'];
+    protected array $fillable = ['id', 'user_id', 'activity_user_score_id', 'score', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
@@ -38,8 +41,8 @@ class ActivityUserScoreLog extends Model
     }
 
     //打分人
-    public function user(): BelongsTo
+    public function activityUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(ActivityUser::class, 'activity_user_id', 'id');
     }
 }

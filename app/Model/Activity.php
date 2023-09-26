@@ -10,13 +10,17 @@ use Hyperf\Database\Model\Relations\HasMany;
 use Hyperf\DbConnection\Model\Model;
 
 /**
- * @property int $id
+ * @property int $id 
  * @property int $user_id 创建人
  * @property string $name 活动名称
  * @property int $status 活动状态 0:未开始 1:进行中 2:已结束
  * @property int $user_num 参与人数
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon $created_at 
+ * @property \Carbon\Carbon $updated_at 
+ * @property-read User|null $user 
+ * @property-read \Hyperf\Database\Model\Collection|User[]|null $activityUsers 
+ * @property-read \Hyperf\Database\Model\Collection|ActivityUser[]|null $activityScoreUsers 
+ * @property-read \Hyperf\Database\Model\Collection|ActivityUserScore[]|null $activityUserScores 
  */
 class Activity extends Model
 {
@@ -28,7 +32,7 @@ class Activity extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected array $fillable = ['user_id', 'name', 'status', 'user_num'];
+    protected array $fillable = ['id', 'user_id', 'name', 'status', 'user_num', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.

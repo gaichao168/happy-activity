@@ -61,7 +61,8 @@
 ```mysql
     create table test.fwh_activity_user_score_log(
         id int primary key auto_increment,
-        user_id int not null comment '用户id',
+        activity_id int not null comment '活动id',
+        activity_user_id int not null comment '参与活动用户id',
         activity_user_score_id int not null comment '活动用户分数id',
         score int not null default 0 comment '分数',
         created_at timestamp null default null,
