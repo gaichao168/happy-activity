@@ -45,7 +45,7 @@ class ActivityExceptionHandler extends ExceptionHandler
                 $this->logger->error($throwable->getMessage());
                 return $this->response->fail($throwable->getMessage(), ErrorCode::SERVER_ERROR);
             case $throwable instanceof ValidationException:
-                return $this->response->fail($throwable->validator->errors()->first(), ErrorCode::UNPROCESSABL_ENTITY);
+                return $this->response->fail(sprintf("%s.%s",$throwable->validator->errors()->keys()[0],$throwable->validator->errors()->first()), ErrorCode::UNPROCESSABL_ENTITY);
         }
         $this->logger->error(format_throwable($throwable));
 

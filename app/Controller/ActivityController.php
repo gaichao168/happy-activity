@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Activity;
+use App\Model\ActivityUser;
 use App\Model\ActivityUserScore;
 use App\Model\ActivityUserScoreLog;
 use App\Model\User;
@@ -103,23 +104,32 @@ class ActivityController extends AbstractController
         $companyNum = $request->getHeaderLine('company-num');
         $user = User::where('company_num', $companyNum)->first();
 
-        $activityUserScore = ActivityUserScore::with('activity')->find($request->input('activity_user_score_id'));
+        $activityUserScore = ActivityUserScore::with('activity', 'activityUser')->find($request->input('activity_user_score_id'));
+        if ($user->id === $activityUserScore->activityUser->user_id) {
+            return $this->response->fail('请勿给自己打分');
+        }
         $activity = $activityUserScore->activity;
 
-        $activityUser = $activity->activityUsers()->where('user_id', $user->id)->first();
+        $activityUser = ActivityUser::where('activity_id', $activity->id)->where('user_id', $user->id)->first();
         if (!$activityUser) {
             return $this->response->fail('你没有参与该活动');
         }
         //判断用户是否打过分
-        if (ActivityUserScoreLog::where('user_id', $user->id)->where('activity_user_score_id', $activityUserScore->id)->exists()) {
+        if (ActivityUserScoreLog::where('activity_user_id', $activityUser->id)->where('activity_user_score_id', $activityUserScore->id)->exists()) {
             return $this->response->fail('请勿重复打分');
         }
 
         $activityUserScore->activityUserScoreLogs()->create([
-            'user_id' => $user->id,
+            'activity_id' => $activity->id,
+            'activity_user_id' => $activityUser->id,
             'score' => $request->input('score')
         ]);
         $activityUserScore->increment('total_score', $request->input('score'));
-        return $this->response->success($activityUserScore->toArray());
+        return $this->response->success([
+            'activity_user_id' => $activityUserScore->activity_user_id,
+            'total_score' => $activityUserScore->total_score,
+            'company_num' => $activityUserScore->activityUser->user->company_num,
+            'username' => $activityUserScore->activityUser->user->username,
+        ]);
     }
 }

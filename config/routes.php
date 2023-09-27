@@ -11,6 +11,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
+use App\Middleware\AuthCheckMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index');
@@ -33,4 +34,4 @@ Router::addGroup('/activities', function () {
     Router::post('/score/user', 'App\Controller\ActivityController@scoreUser');
     Router::get('/show/{id:\d+}/score', 'App\Controller\ActivityController@userScoreList');
     Router::post('/user/score', 'App\Controller\ActivityController@userScore');
-}, ['middleware' => [\App\Middleware\AuthCheckMiddleware::class]]);
+}, ['middleware' => [AuthCheckMiddleware::class]]);

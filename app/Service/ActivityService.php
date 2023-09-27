@@ -14,6 +14,7 @@ class ActivityService
 {
     #[Inject]
     protected RequestInterface $request;
+
     /**
      * @throws \Exception
      */
@@ -63,15 +64,16 @@ class ActivityService
     {
         //判断用户是否参与活动
         $companyNum = $this->request->getHeaderLine('company-num');
-
         $user = User::where('company_num', $companyNum)->first();
+        $currentActivityUser = ActivityUser::where('activity_id', $activityUser->activity_id)->where('user_id', $user->id)->first();
+
         return [
-            'id' => $activityUser->pivot->id,
+            'activity_user_id' => $activityUser->pivot->id,
             'company_num' => $activityUser->user->company_num,
             'username' => $activityUser->user->username,
             'total_score' => $activityUser->pivot->total_score,
             'created_at' => $activityUser->pivot->created_at->format('Y-m-d H:i:s'),
-            'status'=> (int) ActivityUserScoreLog::where('user_id', $user->id)->where('activity_user_score_id', $activityUser->pivot->id)->exists(),
+            'status' => $user->id === $activityUser->user_id || !!ActivityUserScoreLog::where('activity_user_id', $currentActivityUser->id)->where('activity_user_score_id', $activityUser->pivot->id)->exists(),
         ];
     }
 }
